@@ -38,3 +38,28 @@
 (test col->list-roundtrip
   (is (equal (col->list #(1 2 3)) '(1 2 3)))
   (is (equal (col->list '(1 2 3)) '(1 2 3))))
+
+;; M4 — col-map / col-subseq / col-type
+
+(test col-map-preserves-length
+  (let* ((col *v-int*)
+         (mapped (col-map #'identity col)))
+    (is (= (col-length mapped) (col-length col))))
+  (let* ((lst '(10 20 30))
+         (mapped (col-map (lambda (x) (+ x 1)) lst)))
+    (is (= (col-length mapped) 3))))
+
+(test col-subseq-by-indices
+  (let* ((col *v-int*)
+         (indices '(2 0 1))
+         (res (col-subseq col indices)))
+    (is (equalp res #(3 1 2)))
+    (is (equal (col->list res) '(3 1 2))))
+  (let* ((col *v-int*)
+         (indices #(1 1 2)))
+    (is (equalp (col-subseq col indices) #(2 2 3)))))
+
+(test col-type-ignores-na
+  (is (eql (col-type *v-mix*) :int))
+  (is (eql (col-type (vector 1.0 *na* 2)) :double))
+  (is (eql (col-type (vector "a" *na* "b")) :string)))

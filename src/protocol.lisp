@@ -42,16 +42,37 @@ Strings are not treated as vectors."
     (t (%simple-error "col->list: not a vector-like column: ~s" col))))
 
 (defun col-subseq (col indices)
-  "Select indices (list/vector of ints) from col. (stub for M4)"
-  (declare (ignore col indices))
-  (%simple-error "col-subseq: not implemented yet"))
+  "Select elements of COL at given zero-based INDICES (list or vector).
+Returns a simple-vector. Relies on col-ref for bounds checking."
+  (let* ((idx-list (cond
+                     ((and (arrayp indices) (not (stringp indices)))
+                      (coerce indices 'list))
+                     ((and (listp indices) (not (stringp indices)))
+                      indices)
+                     (t (%simple-error "col-subseq: indices must be list or vector, got: ~s" indices))))
+         (k (length idx-list))
+         (out (make-array k)))
+    (loop for idx in idx-list
+          for j from 0
+          do (setf (aref out j) (col-ref col idx)))
+    out))
 
 (defun col-map (fn col)
-  "Map FN over COL and return a column. (stub for M4)"
-  (declare (ignore fn col))
-  (%simple-error "col-map: not implemented yet"))
+  "Map FN over COL and return a simple-vector (v0.1)."
+  (let* ((n (col-length col))
+         (out (make-array n)))
+    (dotimes (i n)
+      (setf (aref out i) (funcall fn (col-ref col i))))
+    out))
 
 (defun col-type (col)
-  "Type tag for column (ignore NA). (stub for M4)"
-  (declare (ignore col))
-  :any)
+  "Type tag for COL, ignoring NA values. Uses value-type/common-type.
+Returns :any if no non-NA values are present."
+  (let* ((n (col-length col))
+         (acc nil))
+    (dotimes (i n)
+      (let* ((x (col-ref col i))
+             (tx (value-type x)))
+        (unless (eq tx :na)
+          (setf acc (if acc (common-type acc tx) tx)))))
+    (or acc :any)))
