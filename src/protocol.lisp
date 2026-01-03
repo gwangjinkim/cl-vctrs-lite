@@ -3,24 +3,43 @@
 (in-package #:cl-vctrs-lite)
 
 (defun as-col (x)
-  "Normalize list -> simple-vector; vector -> itself. (stub for M3)"
-  (declare (ignore x))
-  (%simple-error "as-col: not implemented yet"))
+  "Normalize list -> simple-vector; vector -> itself.
+Strings are not treated as vectors."
+  (cond
+    ;; list -> simple-vector
+    ((and (listp x) (not (stringp x)))
+     (coerce x 'simple-vector))
+    ;; arrays (non-strings) are already vector-like
+    ((and (arrayp x) (not (stringp x))) x)
+    (t (%simple-error "as-col: not a vector-like column: ~s" x))))
 
 (defun col-length (col)
-  "Length of a vector-like column. (stub for M3)"
-  (declare (ignore col))
-  (%simple-error "col-length: not implemented yet"))
+  "Length of a vector-like column."
+  (cond
+    ((and (arrayp col) (not (stringp col))) (length col))
+    ((and (listp col) (not (stringp col))) (length col))
+    (t (%simple-error "col-length: not a vector-like column: ~s" col))))
 
 (defun col-ref (col i)
-  "0-based indexing access. (stub for M3)"
-  (declare (ignore col i))
-  (%simple-error "col-ref: not implemented yet"))
+  "0-based indexing access with bounds checking and informative errors."
+  (unless (and (integerp i) (<= 0 i))
+    (%simple-error "col-ref: index must be a non-negative integer, got ~s" i))
+  (let* ((n (col-length col)))
+    (if (<= (1+ i) n)
+        (cond
+          ((and (arrayp col) (not (stringp col))) (aref col i))
+          ((and (listp col) (not (stringp col))) (nth i col))
+          (t (%simple-error "col-ref: not a vector-like column: ~s" col)))
+        (%simple-error "col-ref: index ~a out of range for length ~a" i n))))
 
 (defun col->list (col)
-  "Convert column to list (for tests/debug). (stub for M3)"
-  (declare (ignore col))
-  (%simple-error "col->list: not implemented yet"))
+  "Convert column to list (for tests/debug)."
+  (cond
+    ((and (listp col) (not (stringp col))) col)
+    ((and (arrayp col) (not (stringp col)))
+     (let ((n (col-length col)))
+       (loop for i from 0 below n collect (col-ref col i))))
+    (t (%simple-error "col->list: not a vector-like column: ~s" col))))
 
 (defun col-subseq (col indices)
   "Select indices (list/vector of ints) from col. (stub for M4)"

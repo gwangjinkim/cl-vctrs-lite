@@ -28,6 +28,7 @@
     :components
     ((:file "package")
      (:file "suite")
+     (:file "types-tests")
      (:file "na-tests")
      (:file "protocol-tests")
      (:file "coerce-tests")
