@@ -2,11 +2,11 @@
 
 # Canonical test command (Roswell, clean session)
 test:
-	ros -Q script scripts/test.ros
+	ros -Q run --load scripts/test.ros --quit
 
 # Optional: start an interactive REPL that loads the local .asd and quickloads the system
 repl:
-	ros -Q script scripts/repl.ros
+	ros -Q run --load scripts/repl.ros --quit
 
 # Placeholder targets (keep for future tooling)
 fmt:
