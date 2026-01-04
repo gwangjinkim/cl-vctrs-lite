@@ -12,7 +12,7 @@
 (handler-case
     (progn
       ;; IMPORTANT: test-system (not load-system) so :perform test-op runs
-      (asdf:test-system :cl-vctors-lite/test)
+      (asdf:test-system :cl-vctrs-lite/test)
       (format t "~&OK~%")
       (uiop:quit 0))
   (error (e)

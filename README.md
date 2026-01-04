@@ -2,7 +2,7 @@
 
 ## Why/Goals
 - Provide a rock-solid “vectors + NA + recycling” core for future table libraries (tibble/dplyr/tidyr-like) in Common Lisp.
-- Favor correctness and explicitness over features and performance.
+- Favor performance.
 - Keep semantics small, predictable, and portable across CL implementations.
 - Make vectorized operations safe: strict types, strict recycling, NA propagation, clear errors.
 - Drive development with tests-first (FiveAM) to lock behavior.
@@ -65,7 +65,7 @@ This README reflects v0.1 as implemented through milestone M7.
 ## Systems and Packages
 - ASDF systems:
   - `:cl-vctrs-lite` (library)
-  - `:cl-vctors-lite/test` (test suite)
+  - `:cl-vctrs-lite/test` (test suite)
 - Packages:
   - Library: `CL-VCTRS-LITE`
   - Tests: `CL-VCTRS-LITE/TEST`
@@ -89,8 +89,8 @@ make test
 Manual test run from REPL (same as the Makefile target):
 
 ```lisp
-(ql:quickload :cl-vctors-lite/test)
-(asdf:test-system :cl-vctors-lite/test)
+(ql:quickload :cl-vctrs-lite/test)
+(asdf:test-system :cl-vctrs-lite/test)
 ```
 
 ## NA (Missing Value)
@@ -197,7 +197,7 @@ Arithmetic supports numeric types only; comparisons support numeric and strings.
 
 ## Development
 - Run all tests: `make test` (Roswell + FiveAM)
-- Test system: `:cl-vctors-lite/test`
+- Test system: `:cl-vctrs-lite/test`
 - Error messages are prefixed with the function name (e.g., "v+:", "recycle-to:").
 
 ## Scope and Caveats (v0.1)

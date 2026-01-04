@@ -19,7 +19,7 @@
      (:file "recycle")
      (:file "ops")))))
 
-(asdf:defsystem #:cl-vctors-lite/test
+(asdf:defsystem #:cl-vctrs-lite/test
   :depends-on (#:cl-vctrs-lite #:fiveam)
   :serial t
   :components
