@@ -358,6 +358,98 @@ In `test/suite.lisp`, define:
 
 Stop after M7 unless asked.
 
+### OPT1 - Optimization for speed
+
+  Big Wins (Order of Impact)
+
+  - Precompute types and pick a single kernel: avoid per-element value-type checks in src/ops.lisp. Compute col-type once per operand (ignoring NA), derive common-type, then select one numeric or string
+    kernel for the whole loop. Only do na-p inside the loop.
+  - Specialize numeric kernels with declarations: use (simple-array double-float (*)) and (simple-vector) with (optimize (speed 3) (safety 0) (debug 0)) for hot paths. Declare (the double-float ...) around
+    numeric values.
+  - Coerce once, then compute: if common-type is :double (or :int with risk of overflow), call col-coerce a single time for each input to avoid element-wise branching. Then run a simple straight-line loop.
+  - Avoid list access in hot paths: normalize everything to vectors upfront (you mostly do this already via recycle2 → recycle-to → as-col).
+  - Reduce allocations in tight loops: pre-size outputs with specialized element-type when known (e.g., double-float kernels) instead of generic make-array.
+
+  Targeted Improvements by Area
+
+  - src/ops.lisp
+      - Replace per-element value-type with preflight:
+          - ta = col-type(a), tb = col-type(b), ct = common-type(ta tb).
+          - If ct is :double: a1 = col-coerce(a :double), b1 = col-coerce(b :double), then run a single double-float kernel loop that only checks na-p and zerop (for v/).
+          - If ct is :int: consider promoting to :double anyway to avoid fixnum overflow, or implement an int kernel with care (portability is trickier).
+          - If ct is :string: run a string kernel (string=, string<, etc.) with just na-p checks.
+          - If unsupported, error once before entering the loop.
+      - Numeric kernels:
+          - Use declare liberally inside the loop:
+              - (declare (type (simple-array double-float (*)) va vb out))
+              - (declare (optimize (speed 3) (safety 0) (debug 0)))
+          - Use (the double-float ...) for aref results and arithmetic.
+          - Pre-allocate out with :element-type 'double-float.
+      - Division by zero:
+          - Keep the strict error; check (zerop y) after na-p but before arithmetic.
+  - src/coerce.lisp
+      - Fast-path col coercion:
+          - When coercing to :double, allocate (make-array n :element-type 'double-float), fill with double-float or *na*. Keep *na* as *na* (not NaN) to preserve semantics; it’s fine to store a mix of
+            double-float and *na* if you stay on simple-vector. For a fully specialized double array, you’d need a parallel NA mask (see “Optional structural changes”).
+      - Inline small helpers and set (declaim (inline coerce-value)).
+  - src/protocol.lisp
+      - col-map and col-subseq: when mapping numeric→numeric with known :double col-type, allocate :element-type 'double-float.
+      - col-ref on lists uses nth (O(i)) but you’ve normalized lists in hot paths already via as-col; keep that invariant and avoid calling col-ref in hot kernels.
+  - src/recycle.lisp
+      - Broadcasting:
+          - Keep making full-size vectors for speed (reads are just aref). Displaced arrays can save memory but rarely speed up arithmetic loops.
+
+  Optional Structural Changes (Bigger Gains, Bigger Changes)
+
+  - NA mask for numeric columns:
+      - Store numeric columns as (simple-array double-float (*)) plus a (simple-bit-vector) NA mask. Represents NA as mask=1. Arithmetic kernels skip mask checks quickly. At the end, if API requires *na*,
+        either keep returning masks (new API) or convert masked positions back to *na* (small cost).
+  - Dedicated column types:
+      - Introduce column classes for double-col, int-col, string-col, each with tight internal representations; dispatch protocol/ops on these types for specialized speed. Keep current list/vector adapters
+        in as-col so public API remains stable.
+  - In-place variants:
+      - Add v+!, v-!, etc. (unsafe, documented), to mutate an existing result buffer. This can cut allocations in pipelines.
+  - JIT-style op fusion:
+      - Compose small vector operations into a single pass (e.g., v+ then v*) to reduce memory traffic. This needs an IR or macro approach; useful for pipelines.
+
+  Quick Implementation Sketch
+
+  - Preflight and numeric kernel in src/ops.lisp:
+      - Compute ta, tb, ct.
+      - If ct ∈ (:int :double): coerce both to :double (one col-coerce each), then:
+          - (let* ((va (the (simple-vector) a2)) (vb ...)) ... or upgrade to true double arrays if you also change col-coerce to allocate double-float arrays.
+          - (let ((out (make-array n :element-type 'double-float))) ...)
+          - Loop: when (or (na-p xa) (na-p ya)) setf (aref out i) ??? — if you keep a pure double array, you need a NA mask; otherwise store *na* and keep out as a general simple-vector.
+  - Declarations example inside the loop:
+      - (declare (optimize (speed 3) (safety 0) (debug 0)))
+      - (declare (type (simple-array double-float (*)) a b out))
+      - (let ((x (the double-float (aref a i))) (y (the double-float (aref b i)))) ...)
+
+  Measuring Impact
+
+  - Benchmarks to write:
+      - vector + scalar (1e6 elements): current vs preflight+double-kernel.
+      - vector + vector mixed int/double: current vs pre-coerce-to-double.
+      - v/ with a few NA values: check that per-element type checks disappear.
+  - Expectation: 5–20x speedups on SBCL for numeric ops due to:
+      - No per-element type dispatch.
+      - Unboxed double loops with tight declarations.
+      - Fewer generic arithmetic calls and consing.
+
+### OPT2 - Optimize more 
+
+  What remains possible for even more speed (optional future work)
+
+  - Use specialized arrays + NA mask:
+      - For numeric columns, store (simple-array double-float (*)) plus a (simple-bit-vector) NA mask to enable unboxed loops without checking generic objects or consing *na* at results. Requires a small
+        column type and protocol specialization.
+  - Pre-coerce for numeric kernels:
+      - We already coerce each element on the fly; a further step is to pre-coerce whole columns with col-coerce to avoid per-element coerce calls. That requires ensuring we still propagate NA correctly and
+        might adjust element types in col-coerce to produce a simple-vector of double-float or keep generic but reduce coercions.
+  - Add in-place variants (e.g., v+!) to avoid allocations when users compose operations.
+
+
+
 ---
 
 ## 11) Public API list (must match exports)
