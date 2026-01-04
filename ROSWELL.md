@@ -41,7 +41,7 @@ If scripts/test.ros does not exist yet (e.g., early scaffold work), run:
 ros -Q run \
   --eval '(require :asdf)' \
   --load 'cl-vctrs-lite.asd' \
-  --eval '(asdf:test-system :cl-vctrs-lite-tests)' \
+  --eval '(asdf:test-system :cl-vctors-lite/test)' \
   --eval '(uiop:quit 0)' \
   --quit
 ```
@@ -65,7 +65,7 @@ Create the file scripts/test.ros with the following content and make it executab
 
 (handler-case
     (progn
-      (asdf:test-system :cl-vctrs-lite-tests)
+      (asdf:test-system :cl-vctors-lite/test)
       (format t "~&OK~%")
       (uiop:quit 0))
   (error (e)
@@ -85,4 +85,3 @@ If you add it later, also make it executable:
 ```bash
 chmod +x scripts/repl.ros
 ```
-

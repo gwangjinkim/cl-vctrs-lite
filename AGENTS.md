@@ -15,7 +15,7 @@ Agents: treat this file as the **source of truth**. Implement **milestone by mil
 For each milestone (M0, M1, …):
 1. Create or update **tests first** (FiveAM).
 2. Implement the minimal code to pass tests.
-3. Run `(asdf:test-system :cl-vctrs-lite-tests)` and fix failures.
+3. Run `(asdf:test-system :cl-vctors-lite/test)` and fix failures.
 4. Summarize changes + list touched files.
 5. STOP. Do not start next milestone unless asked.
 
@@ -49,7 +49,7 @@ ops-tests.lisp
 
 ### ASDF systems
 - `:cl-vctrs-lite`
-- `:cl-vctrs-lite/tests` depends on `:cl-vctrs-lite` and `:fiveam`
+- `:cl-vctors-lite/test` depends on `:cl-vctrs-lite` and `:fiveam`
 
 ### Packages
 - Main: `CL-VCTRS-LITE`
