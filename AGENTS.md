@@ -49,7 +49,7 @@ ops-tests.lisp
 
 ### ASDF systems
 - `:cl-vctrs-lite`
-- `:cl-vctrs-lite-tests` depends on `:cl-vctrs-lite` and `:fiveam`
+- `:cl-vctrs-lite/tests` depends on `:cl-vctrs-lite` and `:fiveam`
 
 ### Packages
 - Main: `CL-VCTRS-LITE`
