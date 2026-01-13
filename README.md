@@ -56,7 +56,14 @@ This README reflects v0.1 as implemented through milestone M7.
 | `recycle-to` | Recycle scalar/len-1 vector to length `n`; strict otherwise (error). |
 | `recycle2` | Recycle two columns to a common size or error for incompatible >1 lengths. |
 
-### Vectorized Ops
+| `recycle2` | Recycle two columns to a common size or error for incompatible >1 lengths. |
+ 
+ ### Concatenation
+ | Symbol | Summary |
+ |---|---|
+ | `vec-c` | Concatenate vectors with automatic type promotion (e.g., int + double → double). |
+ 
+ ### Vectorized Ops
 | Symbol | Summary |
 |---|---|
 | `v+ v- v* v/` | Arithmetic on numeric only; NA propagates; `v/` errors on divide-by-zero. |
@@ -173,7 +180,16 @@ Errors mention the function and lengths, e.g.,
 "recycle-to:" with the name, actual and expected lengths, or
 "recycle2:" with “incompatible lengths”.
 
-## Vectorized Operations
+"recycle2:" with “incompatible lengths”.
+ 
+ ## Concatenation
+ 
+ ```lisp
+ (CL-VCTRS-LITE:VEC-C #(1 2) #(3 4))            ;; => #(1 2 3 4)
+ (CL-VCTRS-LITE:VEC-C #(1) 2.0 #(3))            ;; => #(1.0 2.0 3.0) (:INT + :DOUBLE -> :DOUBLE)
+ ```
+ 
+ ## Vectorized Operations
 All ops accept scalars or vectors/lists, recycle via `recycle2`, and propagate NA.
 Arithmetic supports numeric types only; comparisons support numeric and strings.
 

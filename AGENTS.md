@@ -37,6 +37,7 @@ coerce.lisp
 recycle.lisp
 ops.lisp
 util.lisp
+concat.lisp
 test/
 package.lisp
 suite.lisp
@@ -45,6 +46,7 @@ protocol-tests.lisp
 coerce-tests.lisp
 recycle-tests.lisp
 ops-tests.lisp
+concat-tests.lisp
 ```
 
 ### ASDF systems
@@ -358,6 +360,21 @@ In `test/suite.lisp`, define:
 
 Stop after M7 unless asked.
 
+### M8 — Concatenation (vec-c)
+**Implement**
+- `vec-c (&rest cols)`
+**Behavior**
+- 1. Determine common type of all inputs (reduce `common-type`).
+  - If no inputs, return empty vector (type :any implies empty simple-vector).
+  - If incompatible types, error (inherited from `common-type`).
+- 2. Coerce all inputs to that common type.
+- 3. Concatenate into a fresh vector (simple-vector).
+**Tests**
+- `vec-c` of ints -> int vector
+- `vec-c` of int + double -> double vector
+- `vec-c` of scalar + vector -> combined vector
+- `vec-c` empty -> empty vector
+
 ### OPT1 - Optimization for speed
 
   Big Wins (Order of Impact)
@@ -470,6 +487,9 @@ Recycling:
 
 Ops:
 - `v+` `v-` `v*` `v/` `v=` `v<` `v>` `v<=` `v>=`
+
+Concatenation:
+- `vec-c`
 
 If you add anything else, update this section and add tests.
 

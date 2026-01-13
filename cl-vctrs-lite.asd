@@ -17,6 +17,7 @@
      (:file "protocol")
      (:file "coerce")
      (:file "recycle")
+     (:file "concat")
      (:file "ops")))))
 
 (asdf:defsystem #:cl-vctrs-lite/test
@@ -33,6 +34,7 @@
      (:file "protocol-tests")
      (:file "coerce-tests")
      (:file "recycle-tests")
+     (:file "concat-tests")
      (:file "ops-tests"))))
   :perform (asdf:test-op (op sys)
              (declare (ignore op sys))

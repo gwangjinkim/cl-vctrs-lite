@@ -18,4 +18,7 @@
    #:recycle-to #:recycle2
 
    ;; Ops
-   #:v+ #:v- #:v* #:v/ #:v= #:v< #:v> #:v<= #:v>=))
+   #:v+ #:v- #:v* #:v/ #:v= #:v< #:v> #:v<= #:v>=
+
+   ;; Concatenation
+   #:vec-c))
