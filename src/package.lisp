@@ -2,6 +2,7 @@
 
 (defpackage #:cl-vctrs-lite
   (:use #:cl)
+  (:nicknames #:vctrs)
   (:export
    ;; NA
    #:*na* #:na-p #:not-na-p #:na=?
