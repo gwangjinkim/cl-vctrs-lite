@@ -2,7 +2,7 @@
 
 (asdf:defsystem #:cl-vctrs-lite
   :description "Lite vctrs-like substrate for Common Lisp (includes NA + vector protocol + recycling)."
-  :author "You"
+  :author "Gwang-Jin Kim <gwang.jin.kim.phd@gmail.com>"
   :license "MIT"
   :version "0.0.1"
   :serial t
