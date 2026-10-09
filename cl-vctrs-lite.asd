@@ -18,7 +18,8 @@
      (:file "coerce")
      (:file "recycle")
      (:file "concat")
-     (:file "ops"))))
+     (:file "ops")
+     (:file "logic"))))
   :in-order-to ((asdf:test-op (asdf:test-op #:cl-vctrs-lite/test))))
 
 (asdf:defsystem #:cl-vctrs-lite/test
@@ -36,7 +37,8 @@
      (:file "coerce-tests")
      (:file "recycle-tests")
      (:file "concat-tests")
-     (:file "ops-tests"))))
+     (:file "ops-tests")
+     (:file "logic-tests"))))
   :perform (asdf:test-op (op sys)
              (declare (ignore op sys))
              (uiop:symbol-call :fiveam :run! :suite)))

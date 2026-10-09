@@ -9,6 +9,7 @@
                 #:coerce-value #:col-coerce
                 #:recycle-to #:recycle2
                 #:v+ #:v- #:v* #:v/ #:v= #:v< #:v> #:v<= #:v>=
+                #:v-na-p #:v-not-na-p #:v-not #:v-and #:v-or #:v!=
                 #:vec-c)
   (:export #:suite))
 

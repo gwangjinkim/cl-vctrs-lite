@@ -21,5 +21,8 @@
    ;; Ops
    #:v+ #:v- #:v* #:v/ #:v= #:v< #:v> #:v<= #:v>=
 
+   ;; Missingness + three-valued logic
+   #:v-na-p #:v-not-na-p #:v-not #:v-and #:v-or #:v!=
+
    ;; Concatenation
    #:vec-c))

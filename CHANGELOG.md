@@ -16,3 +16,14 @@ All notable changes to this project are documented here. Format follows
 - Replaced bare `(is err)` assertions with `(is-true err)`; current FiveAM
   rejects a non-list argument to `IS` at macroexpansion time, which turned
   7 tests into errors.
+
+### Added
+- `v-na-p`, `v-not-na-p`: vectorised missingness tests returning T/NIL
+  vectors (never NA). Lets `filter` and `mutate` test for missing values
+  column-wise (topic: NA-aware logic).
+- `v-not`, `v-and`, `v-or`: vectorised, recycling three-valued (Kleene)
+  logic. `NA & FALSE = FALSE`, `NA | TRUE = TRUE`, otherwise NA propagates,
+  as in R. Non-logical inputs signal an error.
+- `v!=`: vectorised inequality with NA propagation.
+- These were previously improvised inside cl-dplyr (where `&` and `|`
+  never worked); cl-dplyr now uses these.
