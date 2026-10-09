@@ -18,6 +18,9 @@ All notable changes to this project are documented here. Format follows
   never worked); cl-dplyr now uses these.
 
 ### Changed
+- AGENTS.md: "Parity work" section listing this repository's parity
+  milestones (X2, X4) and where the plan and backlog live
+  (topic: parity plan).
 - Stopped tracking `build/` (38 files, 960K): the ASDF/Roswell compile
   cache that `make test` writes via `XDG_CACHE_HOME=$(PWD)/build`. It held
   compiled fasls, including Quicklisp internals and absolute local paths.
