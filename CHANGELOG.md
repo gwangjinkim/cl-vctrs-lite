@@ -12,7 +12,7 @@ All notable changes to this project are documented here. Format follows
   even `cl-vctrs-lite/test` only ran the 4 tests in `concat-tests.lisp`:
   every other test file lacked `(fiveam:in-suite :suite)`, so its tests were
   registered outside the suite. Both fixed; the suite went from 13 checks
-  to 116 (topic: test-suite repair).
+  to 114 (134 with the new logic tests) (topic: test-suite repair).
 - Replaced bare `(is err)` assertions with `(is-true err)`; current FiveAM
   rejects a non-list argument to `IS` at macroexpansion time, which turned
   7 tests into errors.
