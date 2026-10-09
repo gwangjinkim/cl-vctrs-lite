@@ -2,6 +2,8 @@
 
 (in-package #:cl-vctrs-lite/test)
 
+(fiveam:in-suite :suite)
+
 ;; M5 — Coercion tests
 
 (test coerce-value-int-to-double
@@ -18,7 +20,7 @@
   (let ((err (handler-case
                  (progn (coerce-value "3.14" :double) nil)
                (error (e) e))))
-    (is err)))
+    (is-true err)))
 
 (test coerce-value-on-error-na
   (is (eq (coerce-value "3.14" :double :on-error :na) *na*)))
@@ -36,7 +38,7 @@
   (let ((err (handler-case
                  (progn (col-coerce #("a" "b") :double) nil)
                (error (e) e))))
-    (is err))
+    (is-true err))
   (is (equalp (col-coerce #("a" "b") :double :on-error :na)
               (vector *na* *na*)))
   (is (equalp (col-coerce #("a" "b") :double :on-error :keep)

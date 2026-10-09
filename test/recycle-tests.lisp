@@ -2,6 +2,8 @@
 
 (in-package #:cl-vctrs-lite/test)
 
+(fiveam:in-suite :suite)
+
 ;; M6 — Recycling tests
 
 (test recycle-to-broadcast-scalar
@@ -20,7 +22,7 @@
          (err (handler-case
                    (progn (recycle-to bad 3 :name "x") nil)
                  (error (e) e))))
-    (is err)
+    (is-true err)
     (let ((msg (princ-to-string err)))
       (is (search "recycle" msg))
       (is (search "x" msg))
@@ -38,7 +40,7 @@
   (let ((err (handler-case
                  (progn (recycle2 #(1 2) #(1 2 3)) nil)
                (error (e) e))))
-    (is err)
+    (is-true err)
     (let ((msg (princ-to-string err)))
       (is (search "incompatible" msg))
       (is (search "length" msg))

@@ -2,6 +2,8 @@
 
 (in-package #:cl-vctrs-lite/test)
 
+(fiveam:in-suite :suite)
+
 (test value-type-basic-tags
   ;; NA
   (is (eql (value-type *na*) :na))

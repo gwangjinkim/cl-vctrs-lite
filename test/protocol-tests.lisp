@@ -2,6 +2,8 @@
 
 (in-package #:cl-vctrs-lite/test)
 
+(fiveam:in-suite :suite)
+
 ;; M3 — Protocol basics: as-col, col-length, col-ref, col->list
 
 (test as-col-normalizes-list
@@ -29,7 +31,7 @@
                    (progn (col-ref col bad-index)
                           nil)
                  (error (e) e))))
-    (is err)
+    (is-true err)
     (let ((msg (princ-to-string err)))
       (is (search "col-ref" msg))
       (is (search (write-to-string bad-index) msg))

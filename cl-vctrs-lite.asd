@@ -18,7 +18,8 @@
      (:file "coerce")
      (:file "recycle")
      (:file "concat")
-     (:file "ops")))))
+     (:file "ops"))))
+  :in-order-to ((asdf:test-op (asdf:test-op #:cl-vctrs-lite/test))))
 
 (asdf:defsystem #:cl-vctrs-lite/test
   :depends-on (#:cl-vctrs-lite #:fiveam)

@@ -2,6 +2,8 @@
 
 (in-package #:cl-vctrs-lite/test)
 
+(fiveam:in-suite :suite)
+
 ;; M7 — Vectorized operations
 
 (test arith-vector-plus-scalar
@@ -18,7 +20,7 @@
   (let ((err (handler-case
                  (progn (v/ *v-int* 0) nil)
                (error (e) e))))
-    (is err)
+    (is-true err)
     (let ((msg (princ-to-string err)))
       (is (search "v/:" msg))
       (is (search "division by zero" msg)))))
@@ -27,7 +29,7 @@
   (let ((err (handler-case
                  (progn (v+ #("a" "b") #(1 2)) nil)
                (error (e) e))))
-    (is err)
+    (is-true err)
     (let ((msg (princ-to-string err)))
       (is (search "v+:" msg))
       (is (search ":string" msg))

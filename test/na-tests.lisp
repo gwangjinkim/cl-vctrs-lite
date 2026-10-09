@@ -2,6 +2,8 @@
 
 (in-package #:cl-vctrs-lite/test)
 
+(fiveam:in-suite :suite)
+
 ;; M1 — NA tests
 
 (test na-singleton-and-predicates
